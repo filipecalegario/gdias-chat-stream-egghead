@@ -55,6 +55,7 @@ export default function Home() {
               return `${prev || ''}${delta.content}`
             })
           });
+          console.log(data);
         } catch (error) {
           console.log(error);
         }
