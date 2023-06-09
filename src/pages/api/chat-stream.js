@@ -23,10 +23,20 @@ export default async function handler(req, context) {
     }
   });
 
+  // return new Response(completion.body, {
+  //   status: 200,
+  //   headers: {
+  //     'Content-Type': 'application/json; charset=utf-8'
+  //   }
+  // })
+
   return new Response(completion.body, {
     status: 200,
     headers: {
-      'Content-Type': 'application/json; charset=utf-8'
+      'Content-Type': 'application/json; charset=utf-8',
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+      'Access-Control-Allow-Headers': 'X-Requested-With, Content-Type, Accept'
     }
   })
 }
