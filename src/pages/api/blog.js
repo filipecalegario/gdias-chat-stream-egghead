@@ -3,6 +3,9 @@ const configuration = new Configuration({
     organization: process.env.OPENAI_ORGANIZATION,
     apiKey: process.env.OPENAI_API_KEY,
 });
+
+console.log(process.env.OPENAI_API_KEY);
+
 const openai = new OpenAIApi(configuration);
 
 const shape = {
@@ -11,6 +14,7 @@ const shape = {
 }
 
 export default async function handler(req, res) {
+
   const { prompt } = JSON.parse(req.body)
 
   const completion = await openai.createChatCompletion({

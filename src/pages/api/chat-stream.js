@@ -20,7 +20,6 @@ export default async function handler(req, context) {
     headers: {
       'Content-Type': 'application/json',
       Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
-      'OpenAI-Organization': process.env.OPENAI_ORGANIZATION
     }
   });
 
