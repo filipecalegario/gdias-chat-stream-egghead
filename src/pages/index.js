@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import Head from 'next/head'
+import { createParser } from 'eventsource-parser'
 
 import Layout from '@/components/Layout';
 import Section from '@/components/Section';
@@ -17,7 +18,7 @@ function getFieldFromFormByName({ name, form } = {}) {
 }
 
 export default function Home() {
-  const [post, setPost] = useState();
+  const [text, setText] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
   async function handleOnGenerateText(e) {
@@ -30,8 +31,44 @@ export default function Home() {
     });
 
     setIsLoading(true);
+    setText('');
     
-    //-----------
+    const response = await fetch("api/chat-stream", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        prompt: prompt,
+      }),
+    });
+
+    const reader = response.body.getReader();
+    const decoder = new TextDecoder("utf-8");
+    
+    function onParse(event) {
+      if(event.type === 'event') {
+        try {
+          const data = JSON.parse(event.data);
+          data.choices.filter(({ delta }) => !!delta.content).forEach(({ delta }) => {
+            setText(prev => {
+              return `${prev || ''}${delta.content}`
+            })
+          });
+        } catch (error) {
+          console.log(error);
+        }
+      }
+    }
+    
+    const parser = createParser(onParse);
+
+    while(true) {
+      const { done, value } = await reader.read();
+      const text = decoder.decode(value);
+      if (done || text.includes("[DONE]")) break;
+      parser.feed(text)
+    }
 
     setIsLoading(false);
   }
@@ -56,14 +93,7 @@ export default function Home() {
               <Button disabled={isLoading}>Generate</Button>
             </FormRow>
           </Form>
-          {post && (
-            <div>
-              <h1>{ post.title }</h1>
-              <div dangerouslySetInnerHTML={{
-                __html: post.content
-              }} />
-            </div>
-          )}
+          {text && (<p key={text}>{text}</p>)}
         </Container>
       </Section>
     </Layout>
