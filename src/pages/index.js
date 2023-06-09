@@ -67,6 +67,7 @@ export default function Home() {
     while(true) {
       const { done, value } = await reader.read();
       const text = decoder.decode(value);
+      console.log(text);
       if (done || text.includes("[DONE]")) break;
       parser.feed(text)
     }
