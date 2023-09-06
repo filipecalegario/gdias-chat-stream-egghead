@@ -88,7 +88,7 @@ export default function Home() {
           <Form className={styles.form} onSubmit={handleOnGenerateText}>
             <h2>Generate Post</h2>
             <FormRow>
-              <label>Enter Your Topic:</label>
+              <label>Enter Your Topic1:</label>
               <FormInput type="text" name="prompt-post" />
             </FormRow>
             <FormRow>
